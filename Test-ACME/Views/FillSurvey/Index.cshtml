@@ -1,0 +1,34 @@
+﻿@model Test_ACME.Models.Survey
+
+@{
+    ViewData["Title"] = "Llenar Encuesta";
+}
+
+<h1>@Model.Name</h1>
+<p>@Model.Description</p>
+
+<form asp-action="Submit" method="post">
+    <input type="hidden" name="uniqueLink" value="@Model.UniqueLink" />
+
+    @foreach (var field in Model.Fields)
+    {
+        <div class="form-group">
+            <label for="field_@field.Id">@field.Title</label>
+
+            @if (field.FieldType == "Texto")
+            {
+                <input type="text" id="field_@field.Id" name="responses[@field.Id]" class="form-control" @(field.IsRequired ? "required" : "") />
+            }
+            else if (field.FieldType == "Número")
+            {
+                <input type="number" id="field_@field.Id" name="responses[@field.Id]" class="form-control" @(field.IsRequired ? "required" : "") />
+            }
+            else if (field.FieldType == "Fecha")
+            {
+                <input type="date" id="field_@field.Id" name="responses[@field.Id]" class="form-control" @(field.IsRequired ? "required" : "") />
+            }
+        </div>
+    }
+
+    <button type="submit" class="btn btn-primary">Enviar Respuestas</button>
+</form>

@@ -34,7 +34,9 @@ namespace Test_ACME.Controllers
             }
 
             var survey = await _context.Surveys
+                .Include(s => s.Fields) // Incluir los campos relacionados
                 .FirstOrDefaultAsync(m => m.Id == id);
+
             if (survey == null)
             {
                 return NotFound();
@@ -42,6 +44,7 @@ namespace Test_ACME.Controllers
 
             return View(survey);
         }
+
 
         // GET: Surveys/Create
         public IActionResult Create()
@@ -69,6 +72,7 @@ namespace Test_ACME.Controllers
 
             return View(survey);
         }
+
 
         // GET: Surveys/Edit/5
         public async Task<IActionResult> Edit(int? id)
