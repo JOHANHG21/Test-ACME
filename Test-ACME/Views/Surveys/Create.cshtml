@@ -4,63 +4,78 @@
     ViewData["Title"] = "Crear Encuesta";
 }
 
-<h1>Crear Encuesta</h1>
+<div class="container mt-5">
+    <h1 class="text-center mb-4 text-primary">Crear Encuesta</h1>
 
-<form asp-action="Create" method="post">
-    <div class="form-group">
-        <label for="Name">Nombre de la Encuesta</label>
-        <input type="text" id="Name" name="Name" class="form-control" required />
-    </div>
+    <form asp-action="Create" method="post" class="shadow p-4 rounded bg-light">
+        <div class="form-group mb-3">
+            <label for="Name" class="form-label"><strong>Nombre de la Encuesta</strong></label>
+            <input type="text" id="Name" name="Name" class="form-control" placeholder="Ingrese el nombre de la encuesta" required />
+        </div>
 
-    <div class="form-group">
-        <label for="Description">Descripción</label>
-        <textarea id="Description" name="Description" class="form-control" required></textarea>
-    </div>
+        <div class="form-group mb-4">
+            <label for="Description" class="form-label"><strong>Descripción</strong></label>
+            <textarea id="Description" name="Description" class="form-control" placeholder="Ingrese una descripción para la encuesta" rows="3" required></textarea>
+        </div>
 
-    <h3>Campos de la Encuesta</h3>
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Nombre del Campo</th>
-                <th>Título del Campo</th>
-                <th>Tipo</th>
-                <th>¿Requerido?</th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody id="fieldsTable">
-            <!-- Aquí se agregarán los campos dinámicamente -->
-        </tbody>
-    </table>
-    <button type="button" class="btn btn-secondary" onclick="addField()">Agregar Campo</button>
+        <h3 class="text-secondary mb-3">Campos de la Encuesta</h3>
+        <table class="table table-bordered table-striped">
+            <thead class="table-primary text-center">
+                <tr>
+                    <th>Nombre del Campo</th>
+                    <th>Título del Campo</th>
+                    <th>Tipo</th>
+                    <th>¿Requerido?</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody id="fieldsTable">
+                <!-- Aquí se agregarán los campos dinámicamente -->
+            </tbody>
+        </table>
+        <div class="d-flex justify-content-end mb-3">
+            <button type="button" class="btn btn-outline-secondary me-2" onclick="addField()">
+                <i class="bi bi-plus-circle"></i> Agregar Campo
+            </button>
+        </div>
 
-    <button type="submit" class="btn btn-primary">Guardar Encuesta</button>
-</form>
+        <div class="text-center">
+            <button type="submit" class="btn btn-success btn-lg"><i class="bi bi-save"></i> Guardar Encuesta</button>
+        </div>
+    </form>
+</div>
 
 @section Scripts {
-        <script>
-            let fieldCount = 0;
+    <script>
+        let fieldCount = 0;
 
-            function addField() {
-                const table = document.getElementById('fieldsTable');
-                const row = document.createElement('tr');
+        function addField() {
+            const table = document.getElementById('fieldsTable');
+            const row = document.createElement('tr');
 
-                row.innerHTML = `
-                    <td><input type="text" name="fields[${fieldCount}].Name" class="form-control" required /></td>
-                    <td><input type="text" name="fields[${fieldCount}].Title" class="form-control" required /></td>
-                    <td>
-                        <select name="fields[${fieldCount}].FieldType" class="form-control" required>
-                            <option value="Texto">Texto</option>
-                            <option value="Número">Número</option>
-                            <option value="Fecha">Fecha</option>
-                        </select>
-                    </td>
-                        <td><input type="hidden" name="fields[${fieldCount}].IsRequired" value="false" /><input type="checkbox" name="fields[${fieldCount}].IsRequired" /></td>
-                    <td><button type="button" class="btn btn-danger" onclick="this.closest('tr').remove()">Eliminar</button></td>
-                `;
+            row.innerHTML = `
+                <td><input type="text" name="fields[${fieldCount}].Name" class="form-control" placeholder="Nombre del campo" required /></td>
+                <td><input type="text" name="fields[${fieldCount}].Title" class="form-control" placeholder="Título del campo" required /></td>
+                <td>
+                    <select name="fields[${fieldCount}].FieldType" class="form-control" required>
+                <option value="Texto">Texto</option>
+                    <option value="Número">Número</option>
+                        <option value="Fecha">Fecha</option>
+                    </select>
+                </td>
+                <td class="text-center">
+                    <input type="hidden" name="fields[${fieldCount}].IsRequired" value="false" />
+                    <input type="checkbox" name="fields[${fieldCount}].IsRequired" class="form-check-input" />
+                </td>
+                <td class="text-center">
+                    <button type="button" class="btn btn-danger btn-sm" onclick="this.closest('tr').remove()">
+                        <i class="bi bi-trash"></i> Eliminar
+                    </button>
+                </td>
+            `;
 
-                table.appendChild(row);
-                fieldCount++;
-            }
-        </script>
+            table.appendChild(row);
+            fieldCount++;
+        }
+    </script>
 }

@@ -1,48 +1,61 @@
 @model IEnumerable<Test_ACME.Models.Survey>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Encuestas";
 }
 
-<h1>Index</h1>
+<div class="container my-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="text-primary">@ViewData["Title"]</h1>
+        <a asp-action="Create" class="btn btn-success btn-lg">
+            <i class="bi bi-plus-circle"></i> Crear Nueva Encuesta
+        </a>
+    </div>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Name)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Description)
-            </th>
-            <th>Enlace para Llenar</th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
-            <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Name)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Description)
-                </td>
-                <td>
-                    <a asp-controller="FillSurvey" asp-action="Index" asp-route-uniqueLink="@item.UniqueLink">
-                        /FillSurvey/@item.UniqueLink
-                    </a>
-                </td>
-                <td>
-                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                    <a asp-action="Delete" asp-route-id="@item.Id">Delete</a> |
-                    <a asp-action="Results" asp-route-id="@item.Id">Ver Resultados</a>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+    @if (Model != null && Model.Any())
+    {
+        <div class="table-responsive">
+            <table class="table table-striped table-hover align-middle shadow-sm">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Descripción</th>
+                        <th>Enlace para Llenar</th>
+                        <th class="text-center">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@Html.DisplayFor(modelItem => item.Name)</td>
+                            <td>@Html.DisplayFor(modelItem => item.Description)</td>
+                            <td>
+                                <a class="text-decoration-none text-primary" asp-controller="FillSurvey" asp-action="Index" asp-route-uniqueLink="@item.UniqueLink">
+                                    /FillSurvey/@item.UniqueLink
+                                </a>
+                            </td>
+                            <td class="text-center">
+                                <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-warning btn-sm">
+                                    <i class="bi bi-pencil"></i> Modificar
+                                </a>
+                                <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger btn-sm">
+                                    <i class="bi bi-trash"></i> Eliminar
+                                </a>
+                                <a asp-action="Results" asp-route-id="@item.Id" class="btn btn-info btn-sm">
+                                    <i class="bi bi-bar-chart"></i> Ver Resultados
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-warning text-center" role="alert">
+            <i class="bi bi-exclamation-circle"></i> No hay encuestas disponibles.
+        </div>
+    }
+</div>

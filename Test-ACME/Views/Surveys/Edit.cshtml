@@ -1,108 +1,123 @@
 @model Test_ACME.Models.Survey
 
 @{
-    ViewData["Title"] = "Editar Encuesta";
+    ViewData["Title"] = "Modificar Encuesta";
     var fields = Model.Fields?.ToList() ?? new List<Test_ACME.Models.SurveyField>();
 }
 
-<h1>Editar Encuesta</h1>
+<div class="container mt-5">
+    <h1 class="text-center mb-4 text-warning">Modificar Encuesta</h1>
 
-<form asp-action="Edit" method="post">
-    <input type="hidden" asp-for="Id" />
-    <div class="form-group">
-        <label for="Name">Nombre de la Encuesta</label>
-        <input type="text" asp-for="Name" class="form-control" required />
-    </div>
+    <form asp-action="Edit" method="post" class="shadow p-4 rounded bg-light">
+        <input type="hidden" asp-for="Id" />
 
-    <div class="form-group">
-        <label for="Description">Descripción</label>
-        <textarea asp-for="Description" class="form-control" required></textarea>
-    </div>
+        <div class="form-group mb-3">
+            <label for="Name" class="form-label"><strong>Nombre de la Encuesta</strong></label>
+            <input type="text" asp-for="Name" class="form-control" placeholder="Ingrese el nuevo nombre de la encuesta" required />
+        </div>
 
-    <h3>Campos de la Encuesta</h3>
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Nombre del Campo</th>
-                <th>Título del Campo</th>
-                <th>Tipo</th>
-                <th>¿Requerido?</th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody id="fieldsTable">
-            @for (int i = 0; i < fields.Count; i++)
-            {
+        <div class="form-group mb-4">
+            <label for="Description" class="form-label"><strong>Descripción</strong></label>
+            <textarea asp-for="Description" class="form-control" placeholder="Ingrese una nueva descripción para la encuesta" rows="3" required></textarea>
+        </div>
+
+        <h3 class="text-secondary mb-3">Campos de la Encuesta</h3>
+        <table class="table table-bordered table-striped">
+            <thead class="table-warning text-center">
                 <tr>
-                    <td>
-                        <input type="hidden" name="Fields[@i].Id" value="@fields[i].Id" />
-                        <input type="text" name="Fields[@i].Name" value="@fields[i].Name" class="form-control" required />
-                    </td>
-                    <td>
-                        <input type="text" name="Fields[@i].Title" value="@fields[i].Title" class="form-control" required />
-                    </td>
-                    <td>
-                        <select name="Fields[@i].FieldType" class="form-control" required>
-                            @foreach (var option in new[] { "Texto", "Número", "Fecha" })
-                            {
-                                if (fields[i].FieldType == option)
-                                {
-                                    <option value="@option" selected>@option</option>
-                                }
-                                else
-                                {
-                                    <option value="@option">@option</option>
-                                }
-                            }
-                        </select>
-                    </td>
-                    <td>
-                        <!-- Campo oculto para enviar false si el checkbox no está marcado -->
-                        @* <input type="hidden" name="Fields[@i].IsRequired" value="false" /> *@
-                        <!-- Checkbox para enviar true si está marcado -->
-                        <input type="checkbox" name="Fields[@i].IsRequired" value="true" @(fields[i].IsRequired ? "checked" : "") />
-                    </td>
-                    <td>
-                        <button type="button" class="btn btn-danger" onclick="this.closest('tr').remove()">Eliminar</button>
-                    </td>
+                    <th>Nombre del Campo</th>
+                    <th>Título del Campo</th>
+                    <th>Tipo</th>
+                    <th>¿Requerido?</th>
+                    <th>Acciones</th>
                 </tr>
-            }
-        </tbody>
-    </table>
+            </thead>
+            <tbody id="fieldsTable">
+                @for (int i = 0; i < fields.Count; i++)
+                {
+                    <tr>
+                        <td>
+                            <input type="hidden" name="Fields[@i].Id" value="@fields[i].Id" />
+                            <input type="text" name="Fields[@i].Name" value="@fields[i].Name" class="form-control" placeholder="Nombre del campo" required />
+                        </td>
+                        <td>
+                            <input type="text" name="Fields[@i].Title" value="@fields[i].Title" class="form-control" placeholder="Título del campo" required />
+                        </td>
+                        <td>
+                            <select name="Fields[@i].FieldType" class="form-control" required>
+                                @foreach (var option in new[] { "Texto", "Número", "Fecha" })
+                                {
+                                    if (fields[i].FieldType == option)
+                                    {
+                                        <option value="@option" selected>@option</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@option">@option</option>
+                                    }
+                                }
+                            </select>
+                        </td>
+                        <td class="text-center">
+                            <input type="checkbox" name="Fields[@i].IsRequired" value="true" @(fields[i].IsRequired ? "checked" : "") />
+                        </td>
+                        <td class="text-center">
+                            <button type="button" class="btn btn-danger btn-sm" onclick="this.closest('tr').remove()">
+                                <i class="bi bi-trash"></i> Eliminar
+                            </button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
 
-    <button type="button" class="btn btn-secondary" onclick="addField()">Agregar Campo</button>
-    <button type="submit" class="btn btn-primary">Guardar Cambios</button>
-</form>
+        <div class="d-flex justify-content-end mb-3">
+            <button type="button" class="btn btn-outline-secondary me-2" onclick="addField()">
+                <i class="bi bi-plus-circle"></i> Agregar Campo
+            </button>
+        </div>
+
+        <div class="text-center">
+            <button type="submit" class="btn btn-success btn-lg"><i class="bi bi-save"></i> Guardar Cambios</button>
+        </div>
+    </form>
+</div>
 
 @section Scripts {
     <script>
         let fieldCount = @fields.Count;
 
-                        function addField() {
+        function addField() {
             const table = document.getElementById('fieldsTable');
             const row = document.createElement('tr');
 
             row.innerHTML = `
-                <td><input type="hidden" name="Fields[${fieldCount}].Id" value="0" />
-                    <input type="text" name="Fields[${fieldCount}].Name" class="form-control" required /></td>
-                <td><input type="text" name="Fields[${fieldCount}].Title" class="form-control" required /></td>
                 <td>
-            <select name="Fields[${fieldCount}].FieldType" class="form-control" required>
-                    <option value="Texto">Texto</option>
+                    <input type="hidden" name="Fields[${fieldCount}].Id" value="0" />
+                    <input type="text" name="Fields[${fieldCount}].Name" class="form-control" placeholder="Nombre del campo" required />
+                </td>
+                <td>
+                    <input type="text" name="Fields[${fieldCount}].Title" class="form-control" placeholder="Título del campo" required />
+                </td>
+                <td>
+                    <select name="Fields[${fieldCount}].FieldType" class="form-control" required>
+                        <option value="Texto">Texto</option>
                         <option value="Número">Número</option>
                         <option value="Fecha">Fecha</option>
                     </select>
                 </td>
-                <td>
-                    <input type="hidden" name="Fields[${fieldCount}].IsRequired" value="false" />
+                <td class="text-center">
                     <input type="checkbox" name="Fields[${fieldCount}].IsRequired" value="true" />
                 </td>
-                <td><button type="button" class="btn btn-danger" onclick="this.closest('tr').remove()">Eliminar</button></td>
+                <td class="text-center">
+                    <button type="button" class="btn btn-danger btn-sm" onclick="this.closest('tr').remove()">
+                        <i class="bi bi-trash"></i> Eliminar
+                    </button>
+                </td>
             `;
 
             table.appendChild(row);
             fieldCount++;
         }
-
     </script>
 }
