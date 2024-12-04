@@ -26,12 +26,12 @@ namespace IdentityApp.Data
                 .HasForeignKey(sr => sr.SurveyId)
                 .OnDelete(DeleteBehavior.Restrict); // Evita la eliminación en cascada
 
-            // Configura la relación entre SurveyResponses y SurveyFields
-            modelBuilder.Entity<SurveyResponse>()
-                .HasOne(sr => sr.Field)
-                .WithMany()
-                .HasForeignKey(sr => sr.FieldId)
-                .OnDelete(DeleteBehavior.Restrict); // Evita la eliminación en cascada
+            // Configuración de la relación entre SurveyField y SurveyResponse
+            modelBuilder.Entity<SurveyField>()
+                .HasMany(f => f.SurveyResponses)
+                .WithOne(r => r.Field)
+                .HasForeignKey(r => r.FieldId)
+                .OnDelete(DeleteBehavior.Cascade); // Elimina respuestas al eliminar el campo
         }
 
 

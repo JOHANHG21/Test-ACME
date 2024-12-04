@@ -14,10 +14,7 @@ public class SurveyResponse
     [Required]
     public string Value { get; set; }
 
-    [ForeignKey("SurveyId")]
-    public Survey Survey { get; set; }
-
-    [ForeignKey("FieldId")]
-    public SurveyField Field { get; set; }
+    public SurveyField Field { get; set; } // Relación con SurveyField
+    public Survey Survey { get; set; } // Relación con Survey
 }
 

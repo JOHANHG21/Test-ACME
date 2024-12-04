@@ -33,7 +33,9 @@
                     @Html.DisplayFor(modelItem => item.Description)
                 </td>
                 <td>
-                    <a href="/FillSurvey/@item.UniqueLink">/FillSurvey/@item.UniqueLink</a>
+                    <a asp-controller="FillSurvey" asp-action="Index" asp-route-uniqueLink="@item.UniqueLink">
+                        /FillSurvey/@item.UniqueLink
+                    </a>
                 </td>
                 <td>
                     <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |

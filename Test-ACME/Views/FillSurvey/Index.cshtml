@@ -13,22 +13,22 @@
     @foreach (var field in Model.Fields)
     {
         <div class="form-group">
-            <label for="field_@field.Id">@field.Title</label>
+            <label>@field.Title</label>
 
             @if (field.FieldType == "Texto")
             {
-                <input type="text" id="field_@field.Id" name="responses[@field.Id]" class="form-control" @(field.IsRequired ? "required" : "") />
+                <input type="text" name="responses[@field.Id]" class="form-control" required />
             }
             else if (field.FieldType == "Número")
             {
-                <input type="number" id="field_@field.Id" name="responses[@field.Id]" class="form-control" @(field.IsRequired ? "required" : "") />
+                <input type="number" name="responses[@field.Id]" class="form-control" required />
             }
             else if (field.FieldType == "Fecha")
             {
-                <input type="date" id="field_@field.Id" name="responses[@field.Id]" class="form-control" @(field.IsRequired ? "required" : "") />
+                <input type="date" name="responses[@field.Id]" class="form-control" required />
             }
         </div>
     }
 
-    <button type="submit" class="btn btn-primary">Enviar Respuestas</button>
+    <button type="submit" class="btn btn-primary">Enviar</button>
 </form>

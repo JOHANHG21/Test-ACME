@@ -38,8 +38,21 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(
+    name: "fillSurvey",
+    pattern: "FillSurvey/{uniqueLink}",
+    defaults: new { controller = "FillSurvey", action = "Index" });
+
+app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+
+app.Use(async (context, next) =>
+{
+    Console.WriteLine($"Request Path: {context.Request.Path}");
+    await next.Invoke();
+});
+
+
 app.MapRazorPages();
 
 app.Run();

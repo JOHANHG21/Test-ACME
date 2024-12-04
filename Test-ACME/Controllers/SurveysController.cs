@@ -57,22 +57,38 @@ namespace Test_ACME.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Description,UniqueLink")] Survey survey)
+        public async Task<IActionResult> Create(Survey survey, List<SurveyField> fields)
         {
+            if (string.IsNullOrEmpty(survey.UniqueLink))
+            {
+                survey.UniqueLink = Guid.NewGuid().ToString();
+            }
+
+            if (!ModelState.IsValid)
+            {
+                foreach (var modelState in ModelState)
+                {
+                    if (modelState.Value.Errors.Count > 0)
+                    {
+                        Console.WriteLine($"Error en propiedad '{modelState.Key}': {string.Join(", ", modelState.Value.Errors.Select(e => e.ErrorMessage))}");
+                    }
+                }
+            }
+
             if (ModelState.IsValid)
             {
+                // Generar el UniqueLink
+                survey.UniqueLink = Guid.NewGuid().ToString();
+
+                // Asociar los campos a la encuesta
+                survey.Fields = fields;
+
                 _context.Add(survey);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-
-            survey.UniqueLink = Guid.NewGuid().ToString();
-            _context.Add(survey);
-            await _context.SaveChangesAsync();
-
             return View(survey);
         }
-
 
         // GET: Surveys/Edit/5
         public async Task<IActionResult> Edit(int? id)
@@ -82,11 +98,17 @@ namespace Test_ACME.Controllers
                 return NotFound();
             }
 
-            var survey = await _context.Surveys.FindAsync(id);
+            // Incluir los campos y las respuestas asociadas
+            var survey = await _context.Surveys
+                .Include(s => s.Fields) // Incluye los campos actuales
+                .ThenInclude(f => f.SurveyResponses) // Incluye respuestas asociadas a los campos
+                .FirstOrDefaultAsync(s => s.Id == id);
+
             if (survey == null)
             {
                 return NotFound();
             }
+
             return View(survey);
         }
 
@@ -95,23 +117,75 @@ namespace Test_ACME.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description,UniqueLink")] Survey survey)
+        public async Task<IActionResult> Edit(int id, Survey survey, List<SurveyField> fields)
         {
             if (id != survey.Id)
             {
                 return NotFound();
             }
 
+            if (string.IsNullOrEmpty(survey.UniqueLink))
+            {
+                survey.UniqueLink = Guid.NewGuid().ToString();
+            }
+
             if (ModelState.IsValid)
             {
                 try
                 {
-                    _context.Update(survey);
+                    // Recuperar la encuesta existente desde la base de datos
+                    var existingSurvey = await _context.Surveys
+                        .Include(s => s.Fields) // Incluye los campos actuales
+                        .FirstOrDefaultAsync(s => s.Id == id);
+
+                    if (existingSurvey == null)
+                    {
+                        return NotFound();
+                    }
+
+                    // Actualizar las propiedades principales de la encuesta
+                    existingSurvey.Name = survey.Name;
+                    existingSurvey.Description = survey.Description;
+
+                    // Procesar campos existentes y nuevos
+                    if (fields != null && fields.Any())
+                    {
+                        foreach (var field in fields)
+                        {
+                            if (field.Id == 0)
+                            {
+                                // Agregar nuevos campos
+                                field.SurveyId = id;
+                                _context.SurveyFields.Add(field);
+                            }
+                            else
+                            {
+                                // Actualizar campos existentes
+                                var existingField = existingSurvey.Fields.FirstOrDefault(f => f.Id == field.Id);
+                                if (existingField != null)
+                                {
+                                    existingField.Name = field.Name;
+                                    existingField.Title = field.Title;
+                                    existingField.FieldType = field.FieldType;
+                                    existingField.IsRequired = field.IsRequired;
+                                }
+                            }
+                        }
+
+                        // Eliminar campos que no están en la lista actual
+                        var fieldsToRemove = existingSurvey.Fields
+                            .Where(existingField => !fields.Any(f => f.Id == existingField.Id))
+                            .ToList();
+
+                        _context.SurveyFields.RemoveRange(fieldsToRemove);
+                    }
+
+                    // Guardar cambios
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!SurveyExists(survey.Id))
+                    if (!_context.Surveys.Any(e => e.Id == id))
                     {
                         return NotFound();
                     }
@@ -120,8 +194,10 @@ namespace Test_ACME.Controllers
                         throw;
                     }
                 }
+
                 return RedirectToAction(nameof(Index));
             }
+
             return View(survey);
         }
 

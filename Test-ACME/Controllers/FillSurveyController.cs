@@ -1,8 +1,8 @@
-using IdentityApp.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.Threading.Tasks;
+using IdentityApp.Data;
 using Test_ACME.Models;
+using System.Threading.Tasks;
 
 namespace Test_ACME.Controllers
 {
@@ -15,11 +15,17 @@ namespace Test_ACME.Controllers
             _context = context;
         }
 
-        // Acción para mostrar la encuesta basada en el UniqueLink
-        [HttpGet("{uniqueLink}")]
+        // GET: FillSurvey/{uniqueLink}
+        [HttpGet]
         public async Task<IActionResult> Index(string uniqueLink)
         {
-            // Buscar la encuesta por el UniqueLink
+            Console.WriteLine($"Solicitud recibida para UniqueLink: {uniqueLink}");
+
+            if (string.IsNullOrEmpty(uniqueLink))
+            {
+                return BadRequest("El enlace proporcionado es inválido.");
+            }
+
             var survey = await _context.Surveys
                 .Include(s => s.Fields)
                 .FirstOrDefaultAsync(s => s.UniqueLink == uniqueLink);
@@ -32,11 +38,15 @@ namespace Test_ACME.Controllers
             return View(survey);
         }
 
-        // Acción para guardar las respuestas
-        [HttpPost("{uniqueLink}")]
+        // POST: FillSurvey/{uniqueLink}
+        [HttpPost]
         public async Task<IActionResult> Submit(string uniqueLink, Dictionary<int, string> responses)
         {
-            // Buscar la encuesta por el UniqueLink
+            if (string.IsNullOrEmpty(uniqueLink))
+            {
+                return BadRequest("El enlace proporcionado es inválido.");
+            }
+
             var survey = await _context.Surveys
                 .Include(s => s.Fields)
                 .FirstOrDefaultAsync(s => s.UniqueLink == uniqueLink);
@@ -46,24 +56,24 @@ namespace Test_ACME.Controllers
                 return NotFound("La encuesta no existe o el enlace es inválido.");
             }
 
-            // Guardar las respuestas
             foreach (var field in survey.Fields)
             {
-                var response = new SurveyResponse
+                if (responses.ContainsKey(field.Id))
                 {
-                    SurveyId = survey.Id,
-                    FieldId = field.Id,
-                    Value = responses.ContainsKey(field.Id) ? responses[field.Id] : null
-                };
-                _context.Add(response);
+                    var response = new SurveyResponse
+                    {
+                        SurveyId = survey.Id,
+                        FieldId = field.Id,
+                        Value = responses[field.Id]
+                    };
+                    _context.SurveyResponses.Add(response);
+                }
             }
 
             await _context.SaveChangesAsync();
-
             return RedirectToAction("ThankYou");
         }
 
-        // Pantalla de agradecimiento
         public IActionResult ThankYou()
         {
             return View();
