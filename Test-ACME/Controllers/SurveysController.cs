@@ -124,9 +124,16 @@ namespace Test_ACME.Controllers
                 return NotFound();
             }
 
-            if (string.IsNullOrEmpty(survey.UniqueLink))
+            if (!ModelState.IsValid)
             {
-                survey.UniqueLink = Guid.NewGuid().ToString();
+                foreach (var key in ModelState.Keys)
+                {
+                    var state = ModelState[key];
+                    foreach (var error in state.Errors)
+                    {
+                        Console.WriteLine($"Error en {key}: {error.ErrorMessage}");
+                    }
+                }
             }
 
             if (ModelState.IsValid)

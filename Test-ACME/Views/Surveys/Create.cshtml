@@ -55,7 +55,7 @@
                             <option value="Fecha">Fecha</option>
                         </select>
                     </td>
-                    <td><input type="checkbox" name="fields[${fieldCount}].IsRequired" /></td>
+                        <td><input type="hidden" name="fields[${fieldCount}].IsRequired" value="false" /><input type="checkbox" name="fields[${fieldCount}].IsRequired" /></td>
                     <td><button type="button" class="btn btn-danger" onclick="this.closest('tr').remove()">Eliminar</button></td>
                 `;
 

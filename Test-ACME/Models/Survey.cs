@@ -9,7 +9,7 @@ namespace Test_ACME.Models
         public string Name { get; set; }
         [Required(ErrorMessage = "La descripción de la encuesta es obligatoria.")]
         public string Description { get; set; }
-        public string UniqueLink { get; set; }
+        public string? UniqueLink { get; set; }
 
         // Inicializa la colección para evitar valores nulos
         public List<SurveyField> Fields { get; set; } = new List<SurveyField>();

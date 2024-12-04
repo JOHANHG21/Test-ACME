@@ -57,7 +57,10 @@
                         </select>
                     </td>
                     <td>
-                        <input type="checkbox" name="Fields[@i].IsRequired" @(fields[i].IsRequired ? "checked" : "") />
+                        <!-- Campo oculto para enviar false si el checkbox no está marcado -->
+                        @* <input type="hidden" name="Fields[@i].IsRequired" value="false" /> *@
+                        <!-- Checkbox para enviar true si está marcado -->
+                        <input type="checkbox" name="Fields[@i].IsRequired" value="true" @(fields[i].IsRequired ? "checked" : "") />
                     </td>
                     <td>
                         <button type="button" class="btn btn-danger" onclick="this.closest('tr').remove()">Eliminar</button>
@@ -75,7 +78,7 @@
     <script>
         let fieldCount = @fields.Count;
 
-        function addField() {
+                        function addField() {
             const table = document.getElementById('fieldsTable');
             const row = document.createElement('tr');
 
@@ -84,18 +87,22 @@
                     <input type="text" name="Fields[${fieldCount}].Name" class="form-control" required /></td>
                 <td><input type="text" name="Fields[${fieldCount}].Title" class="form-control" required /></td>
                 <td>
-                    <select name="Fields[${fieldCount}].FieldType" class="form-control" required>
-                        <option value="Texto">Texto</option>
+            <select name="Fields[${fieldCount}].FieldType" class="form-control" required>
+                    <option value="Texto">Texto</option>
                         <option value="Número">Número</option>
                         <option value="Fecha">Fecha</option>
                     </select>
                 </td>
-                <td><input type="checkbox" name="Fields[${fieldCount}].IsRequired" /></td>
+                <td>
+                    <input type="hidden" name="Fields[${fieldCount}].IsRequired" value="false" />
+                    <input type="checkbox" name="Fields[${fieldCount}].IsRequired" value="true" />
+                </td>
                 <td><button type="button" class="btn btn-danger" onclick="this.closest('tr').remove()">Eliminar</button></td>
             `;
 
             table.appendChild(row);
             fieldCount++;
         }
+
     </script>
 }
