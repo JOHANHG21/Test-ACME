@@ -1,0 +1,44 @@
+﻿@model Test_ACME.Models.Survey
+
+@{
+    ViewData["Title"] = "Resultados de la Encuesta";
+}
+
+<h1>Resultados de la Encuesta: @Model.Name</h1>
+<p>@Model.Description</p>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Campo</th>
+            <th>Título</th>
+            <th>Respuestas</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var field in Model.Fields)
+        {
+            <tr>
+                <td>@field.Name</td>
+                <td>@field.Title</td>
+                <td>
+                    @if (field.SurveyResponses.Any())
+                    {
+                        <ul>
+                            @foreach (var response in field.SurveyResponses)
+                            {
+                                <li>@response.Value</li>
+                            }
+                        </ul>
+                    }
+                    else
+                    {
+                        <span>No hay respuestas registradas.</span>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<a class="btn btn-primary" asp-action="Index">Regresar a Encuestas</a>

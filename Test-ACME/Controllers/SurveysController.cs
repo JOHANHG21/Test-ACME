@@ -245,5 +245,28 @@ namespace Test_ACME.Controllers
         {
             return _context.Surveys.Any(e => e.Id == id);
         }
+
+        public async Task<IActionResult> Results(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound("La encuesta no existe.");
+            }
+
+            // Obtener la encuesta con sus campos y respuestas
+            var survey = await _context.Surveys
+                .Include(s => s.Fields)
+                .ThenInclude(f => f.SurveyResponses) // Incluir las respuestas asociadas a los campos
+                .FirstOrDefaultAsync(s => s.Id == id);
+
+            if (survey == null)
+            {
+                return NotFound("La encuesta no existe.");
+            }
+
+            // Pasar la encuesta con sus respuestas a la vista
+            return View(survey);
+        }
+
     }
 }
