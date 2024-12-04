@@ -39,8 +39,8 @@ app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "fillSurvey",
-    pattern: "FillSurvey/{uniqueLink}",
-    defaults: new { controller = "FillSurvey", action = "Index" });
+    pattern: "FillSurvey/{action=Index}/{uniqueLink?}",
+    defaults: new { controller = "FillSurvey" });
 
 app.MapControllerRoute(
     name: "default",

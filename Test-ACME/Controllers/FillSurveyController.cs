@@ -47,6 +47,7 @@ namespace Test_ACME.Controllers
                 return BadRequest("El enlace proporcionado es inválido.");
             }
 
+            // Obtener la encuesta con los campos
             var survey = await _context.Surveys
                 .Include(s => s.Fields)
                 .FirstOrDefaultAsync(s => s.UniqueLink == uniqueLink);
@@ -56,6 +57,7 @@ namespace Test_ACME.Controllers
                 return NotFound("La encuesta no existe o el enlace es inválido.");
             }
 
+            // Guardar las respuestas enviadas
             foreach (var field in survey.Fields)
             {
                 if (responses.ContainsKey(field.Id))
@@ -71,11 +73,29 @@ namespace Test_ACME.Controllers
             }
 
             await _context.SaveChangesAsync();
-            return RedirectToAction("ThankYou");
+
+            // Redirigir a la acción ThankYou con el uniqueLink
+            return RedirectToAction("ThankYou", new { uniqueLink });
         }
 
-        public IActionResult ThankYou()
+
+        public async Task<IActionResult> ThankYou(string uniqueLink)
         {
+            if (string.IsNullOrEmpty(uniqueLink))
+            {
+                return BadRequest("El enlace proporcionado es inválido.");
+            }
+
+            Console.WriteLine($"El uniqueLink recibido en ThankYou es: {uniqueLink}");
+
+            // Busca la encuesta en la base de datos
+            var survey = await _context.Surveys.FirstOrDefaultAsync(s => s.UniqueLink == uniqueLink);
+            if (survey == null)
+            {
+                return NotFound("La encuesta no existe o el enlace es inválido.");
+            }
+
+            ViewBag.SurveyName = survey.Name;
             return View();
         }
     }
