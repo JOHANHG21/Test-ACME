@@ -19,8 +19,6 @@ namespace Test_ACME.Controllers
         [HttpGet]
         public async Task<IActionResult> Index(string uniqueLink)
         {
-            Console.WriteLine($"Solicitud recibida para UniqueLink: {uniqueLink}");
-
             if (string.IsNullOrEmpty(uniqueLink))
             {
                 return BadRequest("El enlace proporcionado es inválido.");
@@ -74,7 +72,6 @@ namespace Test_ACME.Controllers
 
             await _context.SaveChangesAsync();
 
-            // Redirigir a la acción ThankYou con el uniqueLink
             return RedirectToAction("ThankYou", new { uniqueLink });
         }
 

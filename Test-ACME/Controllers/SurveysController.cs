@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using IdentityApp.Data;
 using Test_ACME.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Test_ACME.Controllers
 {
@@ -25,36 +26,15 @@ namespace Test_ACME.Controllers
             return View(await _context.Surveys.ToListAsync());
         }
 
-        // GET: Surveys/Details/5
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var survey = await _context.Surveys
-                .Include(s => s.Fields) // Incluir los campos relacionados
-                .FirstOrDefaultAsync(m => m.Id == id);
-
-            if (survey == null)
-            {
-                return NotFound();
-            }
-
-            return View(survey);
-        }
-
-
         // GET: Surveys/Create
+        [Authorize]
         public IActionResult Create()
         {
             return View();
         }
 
         // POST: Surveys/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Survey survey, List<SurveyField> fields)
@@ -62,17 +42,6 @@ namespace Test_ACME.Controllers
             if (string.IsNullOrEmpty(survey.UniqueLink))
             {
                 survey.UniqueLink = Guid.NewGuid().ToString();
-            }
-
-            if (!ModelState.IsValid)
-            {
-                foreach (var modelState in ModelState)
-                {
-                    if (modelState.Value.Errors.Count > 0)
-                    {
-                        Console.WriteLine($"Error en propiedad '{modelState.Key}': {string.Join(", ", modelState.Value.Errors.Select(e => e.ErrorMessage))}");
-                    }
-                }
             }
 
             if (ModelState.IsValid)
@@ -91,6 +60,7 @@ namespace Test_ACME.Controllers
         }
 
         // GET: Surveys/Edit/5
+        [Authorize]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -113,8 +83,7 @@ namespace Test_ACME.Controllers
         }
 
         // POST: Surveys/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, Survey survey, List<SurveyField> fields)
@@ -122,18 +91,6 @@ namespace Test_ACME.Controllers
             if (id != survey.Id)
             {
                 return NotFound();
-            }
-
-            if (!ModelState.IsValid)
-            {
-                foreach (var key in ModelState.Keys)
-                {
-                    var state = ModelState[key];
-                    foreach (var error in state.Errors)
-                    {
-                        Console.WriteLine($"Error en {key}: {error.ErrorMessage}");
-                    }
-                }
             }
 
             if (ModelState.IsValid)
@@ -187,7 +144,6 @@ namespace Test_ACME.Controllers
                         _context.SurveyFields.RemoveRange(fieldsToRemove);
                     }
 
-                    // Guardar cambios
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
@@ -209,6 +165,7 @@ namespace Test_ACME.Controllers
         }
 
         // GET: Surveys/Delete/5
+        [Authorize]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -227,6 +184,7 @@ namespace Test_ACME.Controllers
         }
 
         // POST: Surveys/Delete/5
+        [Authorize]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
@@ -264,7 +222,6 @@ namespace Test_ACME.Controllers
                 return NotFound("La encuesta no existe.");
             }
 
-            // Pasar la encuesta con sus respuestas a la vista
             return View(survey);
         }
 
