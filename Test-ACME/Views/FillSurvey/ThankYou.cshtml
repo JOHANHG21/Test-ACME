@@ -2,7 +2,25 @@
     ViewData["Title"] = "Gracias por Completar la Encuesta";
 }
 
-<h1>¡Gracias!</h1>
-<p>Gracias por completar la encuesta: <strong>@ViewBag.SurveyName</strong>.</p>
-<p>Sus respuestas han sido registradas correctamente.</p>
+<div class="container text-center mt-5">
+    <div class="card shadow-lg p-4">
+        <div class="card-body">
+            <h1 class="text-success display-4 mb-3">¡Gracias!</h1>
+            <p class="fs-5 text-muted">
+                Gracias por completar la encuesta: <strong class="text-primary">@ViewBag.SurveyName</strong>.
+            </p>
+            <p class="fs-5 text-muted">
+                Sus respuestas han sido registradas correctamente.
+            </p>
+        </div>
+    </div>
 
+    <div class="mt-4">
+        <a href="/" class="btn btn-primary btn-lg">
+            <i class="bi bi-house"></i> Volver al Inicio
+        </a>
+        <a href="/Surveys/Index" class="btn btn-secondary btn-lg">
+            <i class="bi bi-list-check"></i> Ver Encuestas
+        </a>
+    </div>
+</div>
