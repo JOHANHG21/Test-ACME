@@ -3,48 +3,87 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - Test_ACME</title>
+    <title>@ViewData["Title"] - Encuestas ACME</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.5/font/bootstrap-icons.min.css" rel="stylesheet">
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+        <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm">
             <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Test_ACME</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
+                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">
+                    <i class="bi bi-bar-chart-line-fill"></i> Encuestas ACME
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <a class="navbar-brand" asp-controller="Home" asp-action="Index">MySurveyApp</a>
-                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                        <span class="navbar-toggler-icon"></span>
-                    </button>
-                    <div class="collapse navbar-collapse" id="navbarNav">
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav me-auto">
+                        <li class="nav-item">
+                            <a class="nav-link @ViewData["ActiveNav"] == " Surveys" ? "active" : "" " href="/Surveys/Index">
+                                <i class="bi bi-ui-checks-grid"></i> Encuestas
+                            </a>
+                        </li>
+                    </ul>
+                    <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
                         <ul class="navbar-nav">
-                            <li class="nav-item">
-                                <a class="nav-link" href="/Surveys/Index">Encuestas</a>
-                            </li>
+                            @if (User.Identity.IsAuthenticated)
+                            {
+                                <li class="nav-item">
+                                    <a class="btn btn-outline-light me-2" href="/Identity/Account/Manage">
+                                        <i class="bi bi-person-circle"></i> @User.Identity.Name
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <form id="logoutForm" asp-area="Identity" asp-page="/Account/Logout" method="post" class="d-inline">
+                                        <button type="submit" class="btn btn-danger">
+                                            <i class="bi bi-box-arrow-right"></i> Cerrar Sesión
+                                        </button>
+                                    </form>
+                                </li>
+                            }
+                            else
+                            {
+                                <li class="nav-item">
+                                    <a class="btn btn-outline-light me-2" asp-area="Identity" asp-page="/Account/Register">
+                                        <i class="bi bi-person-plus"></i> Registrarse
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="btn btn-light" asp-area="Identity" asp-page="/Account/Login">
+                                        <i class="bi bi-box-arrow-in-right"></i> Iniciar Sesión
+                                    </a>
+                                </li>
+                            }
                         </ul>
                     </div>
-                    <partial name="_LoginPartial" />
                 </div>
             </div>
         </nav>
     </header>
-    <div class="container">
+
+    <div class="container mt-4">
         <main role="main" class="pb-3">
             @RenderBody()
         </main>
     </div>
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2024 - Test_ACME - 
+    <footer class="bg-dark text-white mt-4">
+        <div class="container py-3">
+            <div class="row">
+                <div class="col-md-6">
+                    <p>&copy; 2024 - Encuestas ACME - JEHG - Todos los derechos reservados.</p>
+                </div>
+                <div class="col-md-6 text-end">
+                    <a href="#" class="text-white me-2"><i class="bi bi-facebook"></i></a>
+                    <a href="#" class="text-white me-2"><i class="bi bi-twitter"></i></a>
+                    <a href="#" class="text-white"><i class="bi bi-linkedin"></i></a>
+                </div>
+            </div>
         </div>
     </footer>
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>

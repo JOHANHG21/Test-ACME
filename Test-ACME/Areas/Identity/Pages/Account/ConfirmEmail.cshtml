@@ -1,8 +1,24 @@
 ﻿@page
 @model ConfirmEmailModel
 @{
-    ViewData["Title"] = "Confirm email";
+    ViewData["Title"] = "Confirmación de Email";
 }
 
-<h1>@ViewData["Title"]</h1>
-<partial name="_StatusMessage" model="Model.StatusMessage" />
+<div class="container d-flex justify-content-center align-items-center vh-100">
+    <div class="card shadow-lg p-4 text-center" style="max-width: 600px; width: 100%;">
+        <div class="card-body">
+            <h2 class="card-title text-success mb-4">
+                <i class="bi bi-envelope-check-fill"></i> Email Confirmado
+            </h2>
+            <p class="lead">
+                Tu dirección de correo electrónico ha sido confirmada exitosamente.
+            </p>
+            <p>
+                Ahora puedes disfrutar de todas las funcionalidades de nuestra plataforma.
+            </p>
+            <a href="/" class="btn btn-primary btn-lg mt-3 w-100">
+                Ir al Inicio
+            </a>
+        </div>
+    </div>
+</div>
